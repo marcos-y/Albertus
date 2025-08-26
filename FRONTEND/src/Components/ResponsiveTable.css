@@ -1,0 +1,21 @@
+/* Estilo general */
+.responsive-table th,
+.responsive-table td {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+/* Estilo responsive */
+@media (max-width: 768px) {
+  .responsive-table th,
+  .responsive-table td {
+    padding: 4px;
+    font-size: 12px;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+}
