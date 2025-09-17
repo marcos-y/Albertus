@@ -1,0 +1,6 @@
+{
+    "compact": true,
+    "controlFlowFlattening": true,
+    "deadCodeInjection": true,
+    "stringArrayEncoding": ["base64"]
+  }
