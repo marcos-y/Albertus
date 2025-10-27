@@ -1,9 +1,13 @@
 import React from 'react';
+import { useNavigate } from "react-router-dom";
 
 const Card = (props) => {
 
+    const navigate = useNavigate();
+
     const handleRedirect = (url) => {
-        window.location.href = url; // Cambia la URL según tu necesidad
+        // window.location.href = url; // Cambia la URL según tu necesidad
+        navigate(url)
     };
 
     return (

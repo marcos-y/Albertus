@@ -48,7 +48,8 @@ function Pedidos() {
                         desc="Aquí podrás ver todos los pedidos realizados."
                         name="Ver Pedidos"
                         color="btn btn-outline-primary"
-                        url="http://localhost:3000/verpedidos"
+                        //url="https://pedidos.albertus.com.ar/verpedidos"
+                        url="/verpedidos"
                         img={logo_pedidos}>
                     </Card>
                     <Card
@@ -56,7 +57,8 @@ function Pedidos() {
                         desc="Aqui podras cargar tus pedidos"
                         name="Cargar Pedidos"
                         color="btn btn-outline-success"
-                        url="http://localhost:3000/cargarpedidos"
+                        //url="https://pedidos.albertus.com.ar/cargarpedidos"
+                        url="/cargarpedidos"
                         img={logo_crear}>
                     </Card>
                 </div>

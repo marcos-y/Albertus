@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Tabla from './Components/tabla';
 import Selectpedido from './Components/selectpedido';
@@ -11,7 +12,7 @@ const VerPedidos = () => {
 
     {/* FECHA | HORA | TIPO | TOTAL | ESTADO | USUARIO*/ }
 
-    const [idSuc, setIdSuc] = useState(localStorage.getItem('idsuc1')); 
+    const [idSuc, setIdSuc] = useState(localStorage.getItem('idsuc1'));
     const [usuario, setUsuario] = useState(localStorage.getItem('idUser'));
 
     const [tipoPedido, setTipoPedido] = useState('');
@@ -20,17 +21,19 @@ const VerPedidos = () => {
     const handleChange = async (event) => {
 
         const tipoPedido = event.target.value
-        
+
         //setTipoPedido(value);
         //listPedidos()
 
         try {
 
-            const response = await axios.post('http://localhost:5000/pedidos/verpedidos', {
+            //const response = await axios.post('https://app.albertus.com.ar/pedidos/verpedidos', {
+            const response = await axios.post('https://localhost:6003/pedidos/verpedidos', {    
                 tipo_pedido: tipoPedido,
                 idusua: usuario,
                 idsuc: idSuc
-            });
+            },
+            );
 
             setPedidosList(response.data)
 
@@ -50,10 +53,17 @@ const VerPedidos = () => {
 
     };
 
+    const navigate = useNavigate();
+
+    const handleRedirect = (url) => {
+        // window.location.href = url; // Cambia la URL según tu necesidad
+        navigate(url)
+    };
+
     return (
         <>
-            <button href="/pedidos" type="button" class="btn btn-primary" style={{ marginLeft: '10px', marginTop: '5px' }}>
-                <a href="/pedidos" style={{ textDecoration: 'none', color: 'white' }}>Volver</a></button>
+            <button onClick={()=>handleRedirect('/pedidos')} type="button" class="btn btn-primary" style={{ marginLeft: '10px', marginTop: '5px' }}>
+                <a onClick={()=>handleRedirect('/pedidos')} style={{ textDecoration: 'none', color: 'white' }}>Volver</a></button>
             <div className="container mt-5" style={{
                 border: 'solid',
                 borderColor: 'black',

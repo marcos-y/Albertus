@@ -27,12 +27,15 @@ const Login = ({ onLogin }) => {
 
         try {
 
-            const response = await axios.post('http://localhost:5000/usuarios/login', {
+            //const response = await axios.post('https://app.albertus.com.ar/usuarios/login', 
+            const response = await axios.post('http://localhost:6003/usuarios/login', 
+            {
                 usuario: username,
                 contra: password,
-            });
+            },
+        );
 
-            console.log(response.data)
+            //console.log(response.data)
 
             //---------DATOS DE USUARIO EN LA SESION-------------------
 
@@ -42,9 +45,9 @@ const Login = ({ onLogin }) => {
             // Almacenar el  nombre de cliente en localStorage
             localStorage.setItem('clientName', response.data[0].usuario);
 
-            if (response.data > 0) {
+            if ( (response.data.length) > 1) {
 
-                // Almacenar el  ID localStorage (pueden ser varias sucs en algunos usuarios)
+                // Almacenar el  IDlis localStorage (pueden ser varias sucs en algunos usuarios)
                 response.data[0].idsuc != null ? localStorage.setItem('idsuc1', response.data[0].idsuc) : localStorage.setItem('idsuc1', '');
                 response.data[0].idlistaprecio != null ? localStorage.setItem('idlis1', response.data[0].idlistaprecio) : localStorage.setItem('idlis1', '');
 
