@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './Login'; // Importa tu componente de Login
 import Home from './Home';   // Otro componente, por ejemplo, una página principal
 import Dashboard from './Dashboard'; // Importa el componente Dashboard
+import BarcodeScanner from './Components/BarcodeScanner';
 import Pedidos from './Pedidos';
 import VerPedidos from './VerPedidos';
 import CargarPedidos from './CargarPedidos';
@@ -10,7 +11,7 @@ import Settings from './settings';
 import Perfil from './Perfil';
 import Sistema from './sistema';
 import 'bootstrap/dist/css/bootstrap.min.css';
-        
+
 const App = () => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated'));
@@ -45,7 +46,7 @@ const App = () => {
           </PrivateRoute>} />
         <Route path="/verpedidos" element={
           <PrivateRoute>
-            <VerPedidos/>
+            <VerPedidos />
           </PrivateRoute>} />
         <Route path="/cargarpedidos" element={
           <PrivateRoute>
@@ -66,6 +67,10 @@ const App = () => {
         <Route path="/sistema" element={
           <PrivateRoute>
             <Sistema />
+          </PrivateRoute>} />
+       <Route path="/scanner" element={
+          <PrivateRoute>
+            <BarcodeScanner />
           </PrivateRoute>} />
       </Routes>
     </Router >

@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from './images/albertus_logo_blanco.jpg';  // Asegúrate de usar la ruta correcta
-import login from './images/login.png';
 import axios from 'axios';
+import Modal from 'react-bootstrap/Modal';
+import { Form, InputGroup, Button } from "react-bootstrap";
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 
 const Login = ({ onLogin }) => {
 
@@ -10,9 +12,36 @@ const Login = ({ onLogin }) => {
     const [password, setPassword] = useState('');   // Estado para la contraseña
     const [clientType, setClientType] = useState('administrador');  // Estado para el tipo de cliente
     const [error, setError] = useState('');        // Estado para el mensaje de error
+    const [status, setStatus] = useState('');        // Error status
     const [loginTime, setLoginTime] = useState(null);
 
     const navigate = useNavigate();  // Hook de React Router para redirigir
+
+    //Modal
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    const handleCloseSubmit = async () => {
+
+        if (newPassword === repeatPassword) {
+
+            //--update pass--
+            const response = await axios.post('https://app.albertus.com.ar/usuarios/updatePassword', 
+            //const response = await axios.post('http://localhost:6003/usuarios/updatePassword',
+                {
+                    usuario: username,
+                    contra: newPassword,
+                },
+            );
+
+            alert('Contraseña actualizada');
+            setShow(false);
+
+        } else {
+            alert('Ambas contraseñas deben ser identicas')
+        }
+    }
 
     // Credenciales predefinidas para este ejemplo
     const validUsername = 'administrador';
@@ -23,19 +52,23 @@ const Login = ({ onLogin }) => {
         navigate('/pedidos');
     };
 
+    const [showPassword, setShowPassword] = useState(false);
+    const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+    const [newPassword, setNewPassword] = useState('');   // Estado para la contraseña
+    const [repeatPassword, setRepeatPassword] = useState('');   // Estado para la contraseña
+
     const login = async (username, password) => {
 
         try {
 
-            //const response = await axios.post('https://app.albertus.com.ar/usuarios/login', 
-            const response = await axios.post('http://localhost:6003/usuarios/login', 
-            {
-                usuario: username,
-                contra: password,
-            },
-        );
-
-            //console.log(response.data)
+            const response = await axios.post('https://app.albertus.com.ar/usuarios/login', 
+            //const response = await axios.post('http://localhost:6003/usuarios/login',
+                {
+                    usuario: username,
+                    contra: password,
+                },
+            );
 
             //---------DATOS DE USUARIO EN LA SESION-------------------
 
@@ -45,7 +78,7 @@ const Login = ({ onLogin }) => {
             // Almacenar el  nombre de cliente en localStorage
             localStorage.setItem('clientName', response.data[0].usuario);
 
-            if ( (response.data.length) > 1) {
+            if ((response.data.length) > 1) {
 
                 // Almacenar el  IDlis localStorage (pueden ser varias sucs en algunos usuarios)
                 response.data[0].idsuc != null ? localStorage.setItem('idsuc1', response.data[0].idsuc) : localStorage.setItem('idsuc1', '');
@@ -60,7 +93,7 @@ const Login = ({ onLogin }) => {
                 response.data[3].idsuc != null ? localStorage.setItem('idsuc4', response.data[3].idsuc) : localStorage.setItem('idsuc4', '');
                 response.data[0].idlistaprecio != null ? localStorage.setItem('idlis4', response.data[3].idlistaprecio) : localStorage.setItem('idlis4', '');
 
-            }else{
+            } else {
                 localStorage.setItem('idsuc1', response.data[0].idsuc)
                 localStorage.setItem('idlis1', response.data[0].idlistaprecio)
             }
@@ -97,6 +130,11 @@ const Login = ({ onLogin }) => {
         } catch (error) {
             if (error.response?.status === 401) {
                 setError('Usuario o contraseña incorrectos');
+                setStatus(401);
+            }
+            else if (error.response?.status === 403) {
+                setError('Debe restablecer su contraseña antes de continuar.');
+                setStatus(403);
             }
             else if (error.response) {
                 // Error del servidor (por ejemplo, 401 Unauthorized)
@@ -121,62 +159,125 @@ const Login = ({ onLogin }) => {
 
     };
 
+
     return (
-        <div className="container mt-5" >
-            <div className="row justify-content-center">
-                <div className="col-md-6">
-                    <div className="card" style={{ marginTop: '70px' }}>
-                        <div className="card-body">
-                            <div className="text-center">
-                                <img
-                                    src={logo} // URL de la imagen externa
-                                    alt="Imagen Externa"
-                                    className="img-fluid"
-                                />
+        <>
+            <div className="container mt-5" >
+                <div className="row justify-content-center">
+                    <div className="col-md-6">
+                        <div className="card" style={{ marginTop: '70px' }}>
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <img
+                                        src={logo} // URL de la imagen externa
+                                        alt="Imagen Externa"
+                                        className="img-fluid"
+                                    />
+                                </div>
+
+                                {/* Formulario de login */}
+                                <form onSubmit={handleSubmit}>
+                                    <div className="mb-3">
+                                        <label htmlFor="username" className="form-label">
+                                            Usuario
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            id="username"
+                                            value={username}
+                                            onChange={(e) => setUsername(e.target.value)}  // Actualiza el estado
+                                            placeholder="Ingresa tu usuario"
+                                        />
+                                    </div>
+                                    <div className="mb-3">
+                                        <label htmlFor="password" className="form-label">
+                                            Contraseña
+                                        </label>
+                                        <input
+                                            type="password"
+                                            className="form-control"
+                                            id="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}  // Actualiza el estado
+                                            placeholder="Ingresa tu contraseña"
+                                        />
+                                    </div>
+                                    {/* Mensaje de error */}
+                                    {error && <div className="alert alert-danger">
+                                        {error}
+                                        {status === 403 ?
+                                            <Button style={{ marginLeft: '10px' }} variant="light" size="sm" onClick={handleShow}>
+                                                Reestablecer Contraseña
+                                            </Button> : ''}
+                                    </div>}
+
+                                    <div className="d-grid gap-2">
+                                        <button type="submit" className="btn btn-primary">
+                                            Iniciar Sesión
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-
-                            {/* Formulario de login */}
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-3">
-                                    <label htmlFor="username" className="form-label">
-                                        Usuario
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        id="username"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}  // Actualiza el estado
-                                        placeholder="Ingresa tu usuario"
-                                    />
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="password" className="form-label">
-                                        Contraseña
-                                    </label>
-                                    <input
-                                        type="password"
-                                        className="form-control"
-                                        id="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}  // Actualiza el estado
-                                        placeholder="Ingresa tu contraseña"
-                                    />
-                                </div>
-                                {/* Mensaje de error */}
-                                {error && <div className="alert alert-danger">{error}</div>}
-
-                                <div className="d-grid gap-2">
-                                    <button type="submit" className="btn btn-primary">
-                                        Iniciar Sesión
-                                    </button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Reestablecer Contraseña</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form.Group
+                        controlId="repeat-password-group">
+                        <Form.Label>Ingrese su nueva contraseña</Form.Label>
+                        <InputGroup>
+                            <Form.Control
+                                id="repeat-password"
+                                value={repeatPassword}
+                                onChange={(e) => setRepeatPassword(e.target.value)}  // Actualiza el estado
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Ingresa tu contraseña"
+                            />
+                            <Button
+                                variant="outline-secondary"
+                                onClick={togglePasswordVisibility}
+                            >
+                                {showPassword ? <EyeSlashFill /> : <EyeFill />}
+                            </Button>
+                        </InputGroup>
+                    </Form.Group>
+                    <Form.Group
+                        style={{ marginTop: '7px' }}
+                        controlId="new-password-group">
+                        <Form.Label>Confirme su nueva contraseña</Form.Label>
+                        <InputGroup>
+                            <Form.Control
+                                id="new-password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}  // Actualiza el estado
+                                type={showPassword ? "text" : "password"}
+                                placeholder="Ingresa tu contraseña"
+                            />
+                            <Button
+                                variant="outline-secondary"
+                                onClick={togglePasswordVisibility}
+                            >
+                                {showPassword ? <EyeSlashFill /> : <EyeFill />}
+                            </Button>
+                        </InputGroup>
+                    </Form.Group>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Cerrar
+                    </Button>
+                    <Button variant="primary" onClick={handleCloseSubmit}>
+                        Guardar contraseña
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
     );
 };
 

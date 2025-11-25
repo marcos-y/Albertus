@@ -62,6 +62,11 @@ function Pedidos() {
                         img={logo_crear}>
                     </Card>
                 </div>
+                {/*
+                <Link to="/scanner">
+                    SCANNER
+                </Link>
+                */}
             </div>
         </>
     );

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import Sidebar from './Sidebar';
+import { useNavigate } from 'react-router-dom';
 import Tabla from './Components/tabla';
 import Selectpedido from './Components/selectpedido';
 import SelectLista from './Components/selectLista';
@@ -17,9 +16,11 @@ const VerPedidos = () => {
 
     const [tipoPedido, setTipoPedido] = useState('');
     const [pedidosList, setPedidosList] = useState([]);
+    const [tipoPed, setTipoPed] = useState('');
 
     const handleChange = async (event) => {
 
+        setTipoPed(event.target.value)
         const tipoPedido = event.target.value
 
         //setTipoPedido(value);
@@ -27,8 +28,8 @@ const VerPedidos = () => {
 
         try {
 
-            //const response = await axios.post('https://app.albertus.com.ar/pedidos/verpedidos', {
-            const response = await axios.post('https://localhost:6003/pedidos/verpedidos', {    
+        const response = await axios.post('https://app.albertus.com.ar/pedidos/verpedidos', {
+        //const response = await axios.post('http://localhost:6003/pedidos/verpedidos', {    
                 tipo_pedido: tipoPedido,
                 idusua: usuario,
                 idsuc: idSuc
@@ -78,7 +79,7 @@ const VerPedidos = () => {
                     </div>
                 </div>
                 <Selectpedido tipoPedido={tipoPedido} handleChange={handleChange} />
-                <ResponsiveTable data={pedidosList} tipoPedido={tipoPedido} />
+                <ResponsiveTable tipoPedido={tipoPed} data={pedidosList}  />
             </div>
         </>
     );

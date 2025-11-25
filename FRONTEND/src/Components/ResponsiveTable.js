@@ -5,6 +5,8 @@ import TablaModal from './tablaModal';
 
 const ResponsiveTable = (props) => {
 
+    console.log(props.tipoPedido)
+
     const [showModal, setShowModal] = useState(false); // Controlar si el modal se muestra o no
     const [selectedProduct, setSelectedProduct] = useState([]); // Producto seleccionado items para mostrar en el modal
 
@@ -90,7 +92,7 @@ const ResponsiveTable = (props) => {
                                 </div>
                                 <div>
                                     <div style={{ padding: '15px', marginBottom:'30px' }}>
-                                        <h5 style={{ float: 'right', backgroundColor:'#87CEFA' }}>Total a cobrar: ${selectedProduct[0].total}</h5>
+                                    {props.tipoPedido === 'I' ? null :  <h5 style={{ float: 'right', backgroundColor:'#87CEFA' }}>Total a cobrar: ${selectedProduct[0].total}</h5>}
                                     </div>
                                 </div>
                             </div>
@@ -100,5 +102,5 @@ const ResponsiveTable = (props) => {
         </>
     );
 };
-
+ 
 export default ResponsiveTable;

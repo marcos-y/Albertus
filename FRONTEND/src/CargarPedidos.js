@@ -11,17 +11,22 @@ import cartIcon from './images/cart_icon.png';
 
 const CargarPedidos = () => {
 
+
+    //---- Almeceno USER ACTUAL ----
     const [usuario, setUsuario] = useState(localStorage.getItem('idUser'));
 
-    //---- Estado para almacenar el TIPO DE PEDIDO seleccionado ----
+
+    //---- TIPO DE PEDIDO seleccionado ----
     const [tipoPedido, setTipoPedido] = useState('');
+
 
     // Maneja el cambio en el desplegable
     const handleChange = (event) => {
         setTipoPedido(event.target.value);
     };
 
-    //---- Estado para almacenar el tipo de LISTA seleccionado ----
+
+    //---- tipo de LISTA seleccionado ----
     const [tipoLista, setTipoLista] = useState('');
 
 
@@ -30,11 +35,12 @@ const CargarPedidos = () => {
         setTipoLista(event.target.value);
     };
 
-    //---- Estado para almacenar el tipo de ID LISTA y SUC seleccionado ----
+
+    //---- tipo de ID LISTA y SUC seleccionado ----
     //const [tipoListaId, setTipoListaId] = useState('');
     const [tipoListaId, setTipoListaId] = useState(localStorage.getItem('idlis1'));
     const [idSuc, setIdSuc] = useState(localStorage.getItem('idsuc1'));
-    //const [idSuc, setIdSuc] = useState('');
+
 
     // Maneja el cambio en el desplegable
     const handleChangeListaId = (event) => {
@@ -45,22 +51,26 @@ const CargarPedidos = () => {
         setIdSuc(idSucu)
     };
 
-    //Listado que maneja las cantidades
+
+    // Listado que maneja las cantidades
     const [productsList, setProductsList] = useState([]);
 
+
     const navigate = useNavigate();
+
 
     const handleRedirect = (url) => {
         // window.location.href = url; // Cambia la URL según tu necesidad
         navigate(url)
     };
 
-    //listar poductos
+
+    //************* listar listado poductos segun FILTROS *************
     const handleChangeData = async (event) => {
 
         try {
-            //const response = await axios.post('https://app.albertus.com.ar/pedidos/products', {
-            const response = await axios.post('http://localhost:6003/pedidos/products', {
+            const response = await axios.post('https://app.albertus.com.ar/pedidos/products', {
+            //const response = await axios.post('http://localhost:6003/pedidos/products', {
                 tipo_lista: tipoLista,
                 idusua: usuario,
                 idListaPre: tipoListaId
@@ -86,6 +96,8 @@ const CargarPedidos = () => {
 
     };
 
+
+    // muestro LISTADO
     useEffect(() => {
         // Esta función se ejecuta cada vez que 'tipoLista' cambia
         // console.log(`El valor cambió: ${tipoLista}`);
@@ -97,8 +109,9 @@ const CargarPedidos = () => {
     // }, [tipoLista]);  <- dependencia: se ejecuta cuando 'tipoLista' cambia
 
 
-    // Estado para el texto de búsqueda y las opciones filtradas
+    // TEXTO de búsqueda y las opciones filtradas
     const [searchText, setSearchText] = useState('');
+
 
     // Función para manejar el cambio en el campo de texto
     const handleChangeSearch = (event) => {
@@ -106,10 +119,12 @@ const CargarPedidos = () => {
         setSearchText(query);
     };
 
-    //--quantity INPUT
+
+    //-- quantity INPUT
     const [quantity, setQuantity] = useState(0);
 
-    //--quantity update
+
+    //-- quantity update
     const handleCantidadChange = (id, nuevaCantidad) => {
 
         const nuevosItems = productsList.map(item =>
@@ -119,14 +134,18 @@ const CargarPedidos = () => {
         setProductsList(nuevosItems);
 
         //Agrego a listado PPAL
-
     };
 
-    //--products list added
+
+    //-- LISTADO DEFINITIVO --
     const [listado, setListado] = useState([]);
 
-    //--add product a lista final
+
+    //-- add product a LISTADO DEFINITIVO --
     const handleAddProduct = (product, quantity) => {
+
+        //si entra con coma reemplazo por punto
+        quantity.replace(",", ".");
 
         //veo si ya esta agregado
         const newItems = listado.filter(item => item.articulo === product.articulo);
@@ -134,8 +153,8 @@ const CargarPedidos = () => {
 
         if (newItems.length != 0) {
 
-            // SI YA ESTA AGREGADO MODIFICAR LA CANTIDAD
-            //actualizo en LISTADO FINAL a AGREGAR -----------
+            // si ya esta agregado MODIFICAR LA CANTIDAD
+            // actualizo en LISTADO FINAL a AGREGAR  
 
             if (quantity > 0) {
 
@@ -147,14 +166,14 @@ const CargarPedidos = () => {
 
             } else {
 
-                //1-excluyo ese articulo
                 const newItems = listado.filter(item => item.articulo !== product.articulo);
 
                 //2-actualizo el array PPAL
                 setListado(newItems)
+
             }
 
-            //actualizo en PRODUCT LIST ------------------
+            // actualizo en PRODUCT LIST --
 
             const productListado = productsList.map(p =>
                 p.articulo === product.articulo ? { ...p, cantidad: quantity } : p
@@ -165,17 +184,25 @@ const CargarPedidos = () => {
         } else {
 
             //SI NO ESTA AGREGADO
-            //1_tengo que agregar su cantidad al listado definitido a CARGAR
+            // -- filtro que no sea CERO
+            if (quantity > 0) {
 
-            product.cantidad = quantity
+                //1_tengo que agregar su cantidad al listado definitido a CARGAR
 
-            //2_Agrego al listado definitivo a CARGAR (listado)
-            setListado(prev => [...prev, product]);
+                product.cantidad = quantity
+
+                //2_Agrego al listado definitivo a CARGAR (listado)
+                setListado(prev => [...prev, product]);
+
+            } else {
+                alert('Ingrese cantidad mayor a cero')
+            }
 
         }
     };
 
-    //--delet product
+
+    //-- delet product de LISTADO DEFINITIVO
     const handleDeletProduct = (product) => {
 
         //1-excluyo ese articulo
@@ -197,7 +224,8 @@ const CargarPedidos = () => {
     };
 
 
-    //--INSERTAR listado en Backend
+
+    //************* INSERTAR listado en Backend *************
     const handleRegister = async (products) => {
 
         if (products.length === 0) {
@@ -208,8 +236,8 @@ const CargarPedidos = () => {
 
             try {
 
-                //const response = await axios.post('https://app.albertus.com.ar/pedidos/insertPedido', {
-                const response = await axios.post('http://localhost:6003/pedidos/insertPedido', {
+                const response = await axios.post('https://app.albertus.com.ar/pedidos/insertPedido', {
+                 //const response = await axios.post('http://localhost:6003/pedidos/insertPedido', {
                     products: JSON.stringify(products),
                     total: products.reduce((acumulador, item) => acumulador + (item.cantidad * item.precio), 0),
                     idusua: usuario,
@@ -294,9 +322,9 @@ const CargarPedidos = () => {
                         <table className="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Código</th>
-                                    <th>Descripción</th>
-                                    <th>Cantidad</th>
+                                    <th style={{ maxWidth: '100px' }}>Código</th>
+                                    <th style={{ maxWidth: '100px' }}>Descripción</th>
+                                    <th style={{ maxWidth: '30px' }}>Cant</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -308,16 +336,16 @@ const CargarPedidos = () => {
                                     }
                                     ).map((item, index) => (
                                         <tr key={index}>
-                                            <td>{item.articulo}</td>
-                                            <td>{item.DesCorta}</td>
-                                            <td>
+                                            <td style={{ maxWidth: '100px' }}>{item.articulo}</td>
+                                            <td style={{ maxWidth: '100px' }}>{item.DesCorta}</td>
+                                            <td style={{ maxWidth: '30px' }}>
                                                 <input
                                                     type="number"
                                                     inputmode="decimal"
                                                     step="any"
                                                     name="cantidad_001"
                                                     class="form-control"
-                                                    min="0"
+                                                    min="1"
                                                     value={item.cantidad}
                                                     //placeholder={item.cantidad ? item.cantidad : 0}
                                                     //placeholder="0"
@@ -327,8 +355,8 @@ const CargarPedidos = () => {
                                                 >
                                                 </input>
                                             </td>
-                                            <td>
-                                                {/*
+                                            {/*<td>
+                                                
                                                 <button
                                                     href="cargar"
                                                     type="button"
@@ -337,8 +365,9 @@ const CargarPedidos = () => {
                                                 >
                                                     Agregar
                                                 </button>
-                                                */}
+                                                
                                             </td>
+                                            */}
                                         </tr>
                                     ))}
                             </tbody>
@@ -391,7 +420,7 @@ const CargarPedidos = () => {
                     </table>
                 </div>
 
-               { tipoPedido === 'I' ?  null :<h5>Total: ${listado.reduce((acumulador, item) => acumulador + (item.cantidad * item.precio), 0)}</h5>}
+                {tipoPedido === 'I' ? null : <h5>Total: ${listado.reduce((acumulador, item) => acumulador + (item.cantidad * item.precio), 0)}</h5>}
                 <button
                     href="cargar"
                     type="button"
